@@ -61,7 +61,11 @@
                     <tbody>
                         {% for document in documents %}
                             <tr>
-                                <td>{{ document.original_filename }}</td>
+                                <td>
+                                    <a href="{{ url_for('document_detail', document_id=document.id) }}">
+                                        {{ document.original_filename }}
+                                    </a>
+                                </td>
                                 <td>{{ document.document_type }}</td>
                                 <td>{{ document.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                 <td>
@@ -79,9 +83,47 @@
                                 <td>{{ document.version }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-sm btn-outline-primary">View</a>
-                                        <a href="#" class="btn btn-sm btn-outline-secondary">Comments</a>
-                                        <a href="#" class="btn btn-sm btn-outline-success">Download</a>
+                                        <a href="{{ url_for('document_detail', document_id=document.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="{{ url_for('download_document', document_id=document.id) }}" class="btn btn-sm btn-outline-success">Download</a>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            More
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#statusModal{{ document.id }}">Change Status</a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('upload_new_version', document_id=document.id) }}">Upload New Version</a></li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <!-- Status Update Modal -->
+                                    <div class="modal fade" id="statusModal{{ document.id }}" tabindex="-1" aria-labelledby="statusModalLabel{{ document.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="statusModalLabel{{ document.id }}">Update Status</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ url_for('update_document_status', document_id=document.id) }}" method="post">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="status{{ document.id }}" class="form-label">Status</label>
+                                                            <select class="form-select" id="status{{ document.id }}" name="status" required>
+                                                                <option value="" disabled>Select status</option>
+                                                                <option value="Uploaded" {% if document.status == 'Uploaded' %}selected{% endif %}>Uploaded</option>
+                                                                <option value="In Review" {% if document.status == 'In Review' %}selected{% endif %}>In Review</option>
+                                                                <option value="Reviewed" {% if document.status == 'Reviewed' %}selected{% endif %}>Reviewed</option>
+                                                                <option value="Updated" {% if document.status == 'Updated' %}selected{% endif %}>Updated</option>
+                                                                <option value="Approved" {% if document.status == 'Approved' %}selected{% endif %}>Approved</option>
+                                                                <option value="Resubmitted" {% if document.status == 'Resubmitted' %}selected{% endif %}>Resubmitted</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update Status</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
