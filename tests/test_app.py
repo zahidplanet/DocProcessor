@@ -42,4 +42,11 @@ def test_upload_page(client):
 def test_404_page(client):
     """Test the 404 error page."""
     response = client.get('/nonexistent')
-    assert response.status_code == 404 
+    assert response.status_code == 404
+
+
+def test_changelog_redirect(client):
+    """Test that the changelog route redirects when no document exists."""
+    response = client.get('/documents/nonexistent-id/changelog')
+    assert response.status_code == 302  # Redirect
+    assert b'Redirecting' in response.data 
