@@ -1,0 +1,23 @@
+# Core dependencies
+Flask==2.3.3
+PyPDF2==3.0.1
+python-docx==0.8.11
+openpyxl==3.1.2
+pandas==2.1.0
+SQLAlchemy==2.0.20
+pydantic==2.4.2
+
+# UI
+Flask-WTF==1.1.1
+Bootstrap-Flask==2.3.0
+
+# Document processing
+textract==1.6.5
+diff-match-patch==20230430
+reportlab==4.0.4
+
+# Development tools
+pytest==7.4.2
+black==23.9.1
+flake8==6.1.0
+python-dotenv==1.0.0 

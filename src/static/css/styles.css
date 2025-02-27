@@ -1,0 +1,59 @@
+/* Custom styles for DocProcessor */
+
+/* Basic styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Jumbotron (Bootstrap 5 doesn't have jumbotron anymore) */
+.jumbotron {
+    padding: 2rem;
+    background-color: #e9ecef;
+    border-radius: 0.3rem;
+}
+
+/* Cards customization */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+/* Custom button styling */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Table customization */
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+}
+
+/* Custom badge colors for document status */
+.badge {
+    font-weight: 500;
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid #dee2e6;
+} 
