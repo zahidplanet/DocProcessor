@@ -90,6 +90,12 @@
                     <a href="{{ url_for('upload_new_version', document_id=document.id) }}" class="btn btn-outline-success">
                         Upload New Version
                     </a>
+                    <a href="{{ url_for('download_document', document_id=document.id) }}" class="btn btn-outline-info">
+                        Download
+                    </a>
+                    <a href="{{ url_for('view_changelog', document_id=document.id) }}" class="btn btn-outline-dark">
+                        View Changelog
+                    </a>
                 </div>
             </div>
         </div>

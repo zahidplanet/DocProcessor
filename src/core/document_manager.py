@@ -76,11 +76,10 @@ class DocumentManager:
             The document
             
         Raises:
-            KeyError: If the document doesn't exist
+            KeyError: If the document does not exist
         """
         if document_id not in self.documents:
-            raise KeyError(f"Document {document_id} not found")
-            
+            raise KeyError(f"Document with ID {document_id} not found")
         return self.documents[document_id]
     
     def get_document_text(self, document_id: str) -> str:
@@ -220,4 +219,23 @@ class DocumentManager:
             versions.extend(parent_versions)
         
         # Sort by version number
-        return sorted(versions, key=lambda d: d.version) 
+        return sorted(versions, key=lambda d: d.version)
+    
+    def get_document_versions(self, document_id: str) -> List[Document]:
+        """
+        Get all versions of a document.
+        
+        Args:
+            document_id: ID of the original document
+            
+        Returns:
+            List of document versions (excluding the original)
+        """
+        if document_id not in self.documents:
+            raise KeyError(f"Document with ID {document_id} not found")
+            
+        # Find all documents that have this document as their parent
+        versions = [doc for doc in self.documents.values() 
+                   if doc.parent_document_id == document_id]
+        
+        return versions 

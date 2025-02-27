@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from src.models.document import DocumentType, DocumentStatus, CommentStatus
 from src.core.document_manager import DocumentManager
 from src.core.comment_manager import CommentManager
+from src.utils.changelog.generator import ChangelogGenerator
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -26,6 +27,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # Initialize managers
 document_manager = DocumentManager(app.config['UPLOAD_FOLDER'])
 comment_manager = CommentManager()
+changelog_generator = ChangelogGenerator(app.config['UPLOAD_FOLDER'])
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc', 'xlsx', 'xls'}
@@ -260,6 +262,66 @@ def upload_new_version(document_id):
         )
     except KeyError:
         flash('Document not found', 'danger')
+        return redirect(url_for('documents'))
+
+@app.route('/documents/<document_id>/changelog')
+def view_changelog(document_id):
+    """View changelog between document versions."""
+    try:
+        document = document_manager.get_document(document_id)
+        
+        # If this is not a versioned document, check if it has versions
+        if not document.parent_document_id:
+            # Get all versions (children) of this document
+            versions = document_manager.get_document_versions(document_id)
+            if not versions:
+                flash('No versions available for this document', 'warning')
+                return redirect(url_for('document_detail', document_id=document_id))
+                
+            # Use the newest version for comparison
+            newest_version = max(versions, key=lambda d: d.version)
+            return redirect(url_for('view_changelog_between_versions', 
+                                   original_id=document_id, 
+                                   new_id=newest_version.id))
+        
+        # If this is a versioned document, compare with parent
+        parent_id = document.parent_document_id
+        return redirect(url_for('view_changelog_between_versions', 
+                               original_id=parent_id, 
+                               new_id=document_id))
+    except KeyError:
+        flash('Document not found', 'danger')
+        return redirect(url_for('documents'))
+
+@app.route('/changelog/<original_id>/<new_id>')
+def view_changelog_between_versions(original_id, new_id):
+    """View changelog between two specific document versions."""
+    try:
+        original_doc = document_manager.get_document(original_id)
+        new_doc = document_manager.get_document(new_id)
+        
+        # Get resolved comments for the original document
+        all_comments = comment_manager.get_comments_for_document(original_id)
+        resolved_comments = [c for c in all_comments if c.status == CommentStatus.RESOLVED]
+        
+        # Generate changelog
+        formatted_changelog = changelog_generator.generate_formatted_changelog(
+            original_doc, new_doc, resolved_comments
+        )
+        
+        return render_template(
+            'changelog.html',
+            title=f'Changelog: {original_doc.original_filename}',
+            original_doc=original_doc,
+            new_doc=new_doc,
+            changelog=formatted_changelog
+        )
+    except KeyError as e:
+        flash(f'Document not found: {str(e)}', 'danger')
+        return redirect(url_for('documents'))
+    except Exception as e:
+        app.logger.error(f"Error generating changelog: {str(e)}")
+        flash(f'Error generating changelog: {str(e)}', 'danger')
         return redirect(url_for('documents'))
 
 # Error handlers

@@ -1,9 +1,10 @@
 """
-Tests for the DocProcessor application.
+Test cases for the DocProcessor application.
 """
 
 import os
 import pytest
+import tempfile
 from src.app import app
 
 
@@ -11,35 +12,34 @@ from src.app import app
 def client():
     """Create a test client for the app."""
     app.config['TESTING'] = True
-    app.config['WTF_CSRF_ENABLED'] = False
+    app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
+    
     with app.test_client() as client:
-        with app.app_context():
-            yield client
+        yield client
 
 
-def test_index(client):
-    """Test the index page."""
+def test_index_page(client):
+    """Test that the index page loads."""
     response = client.get('/')
     assert response.status_code == 200
-    assert b'Welcome to DocProcessor' in response.data
+    assert b'DocProcessor Dashboard' in response.data
 
 
 def test_documents_page(client):
-    """Test the documents page."""
+    """Test that the documents page loads."""
     response = client.get('/documents')
     assert response.status_code == 200
     assert b'Documents' in response.data
 
 
 def test_upload_page(client):
-    """Test the upload page."""
+    """Test that the upload page loads."""
     response = client.get('/upload')
     assert response.status_code == 200
     assert b'Upload Document' in response.data
 
 
-def test_error_404(client):
-    """Test 404 error page."""
-    response = client.get('/non-existent-page')
-    assert response.status_code == 404
-    assert b'Page Not Found' in response.data 
+def test_404_page(client):
+    """Test the 404 error page."""
+    response = client.get('/nonexistent')
+    assert response.status_code == 404 

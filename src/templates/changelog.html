@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    {{ bootstrap.load_css() }}
+    <style>
+        .changelog-content {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .document-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .addition {
+            color: green;
+        }
+        
+        .deletion {
+            color: red;
+        }
+        
+        .modification {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">DocProcessor</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('documents') }}">Documents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('upload') }}">Upload</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <h1 class="mb-4">{{ title }}</h1>
+        
+        <div class="document-info">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Original Document (v{{ original_doc.version }})</h4>
+                    <p><strong>Filename:</strong> {{ original_doc.original_filename }}</p>
+                    <p><strong>Type:</strong> {{ original_doc.document_type }}</p>
+                    <p><strong>Upload Date:</strong> {{ original_doc.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>Status:</strong> {{ original_doc.status }}</p>
+                    <a href="{{ url_for('document_detail', document_id=original_doc.id) }}" class="btn btn-sm btn-primary">View Document</a>
+                </div>
+                <div class="col-md-6">
+                    <h4>New Document (v{{ new_doc.version }})</h4>
+                    <p><strong>Filename:</strong> {{ new_doc.original_filename }}</p>
+                    <p><strong>Type:</strong> {{ new_doc.document_type }}</p>
+                    <p><strong>Upload Date:</strong> {{ new_doc.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>Status:</strong> {{ new_doc.status }}</p>
+                    <a href="{{ url_for('document_detail', document_id=new_doc.id) }}" class="btn btn-sm btn-primary">View Document</a>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Change Summary</h2>
+        
+        <div class="changelog-content">
+{{ changelog|safe }}
+        </div>
+        
+        <div class="mt-4 mb-5">
+            <a href="{{ url_for('documents') }}" class="btn btn-secondary">Back to Documents</a>
+        </div>
+    </div>
+    
+    {{ bootstrap.load_js() }}
+</body>
+</html> 
